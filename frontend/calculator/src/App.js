@@ -1,9 +1,13 @@
 import React, { useState } from "react";
+import { QueryClient, QueryClientProvider, useMutation, useQuery } from "@tanstack/react-query";
 
 import Wrapper from "./components/Wrapper";
 import Screen from "./components/Screen";
 import ButtonBox from "./components/ButtonBox";
 import Button from "./components/Button";
+import History from "./components/History";
+
+const queryClient = new QueryClient();
 
 const btnValues = [
   ["C", "+-", "%", "/"],
@@ -18,12 +22,57 @@ const toLocaleString = (num) =>
 
 const removeSpaces = (num) => num.toString().replace(/\s/g, "");
 
+async function postCalculate(calcRequest) {
+  const response = await fetch(
+    "http://localhost:8080/api/calculate",
+    {
+      method: "POST",
+      body: JSON.stringify(calcRequest),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  )
+  if (!response.ok) {
+    const errorMessage = await response.text()
+    throw new Error('Failed to calculate on server-side: ' + errorMessage)
+  }
+  return response.text()
+}
+
 const App = () => {
-  let [calc, setCalc] = useState({
+  const [calc, setCalc] = useState({
     sign: "",
     num: 0,
     res: 0,
   });
+
+  function makeCalcRequest() {
+    const operator = calc.sign == 'X' ? '*' : calc.sign
+    return {
+      num1: Number(removeSpaces(calc.res)),
+      operator: operator,
+      num2: Number(removeSpaces(calc.num)),
+    }
+  }
+
+  const mutation = useMutation({
+    mutationFn: () => {
+      return postCalculate(makeCalcRequest())
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries()
+      setCalc({
+        ...calc,
+        res: data,
+        sign: "",
+        num: 0,
+      });
+    },
+    onError: (error) => {
+      alert(error.message)
+    },
+  })
 
   const numClickHandler = (e) => {
     e.preventDefault();
@@ -36,8 +85,8 @@ const App = () => {
           calc.num === 0 && value === "0"
             ? "0"
             : removeSpaces(calc.num) % 1 === 0
-            ? toLocaleString(Number(removeSpaces(calc.num + value)))
-            : toLocaleString(calc.num + value),
+              ? toLocaleString(Number(removeSpaces(calc.num + value)))
+              : toLocaleString(calc.num + value),
         res: !calc.sign ? 0 : calc.res,
       });
     }
@@ -67,30 +116,7 @@ const App = () => {
 
   const equalsClickHandler = () => {
     if (calc.sign && calc.num) {
-      const math = (a, b, sign) =>
-        sign === "+"
-          ? a + b
-          : sign === "-"
-          ? a - b
-          : sign === "X"
-          ? a * b
-          : a / b;
-
-      setCalc({
-        ...calc,
-        res:
-          calc.num === "0" && calc.sign === "/"
-            ? "Can't divide with 0"
-            : toLocaleString(
-                math(
-                  Number(removeSpaces(calc.res)),
-                  Number(removeSpaces(calc.num)),
-                  calc.sign
-                )
-              ),
-        sign: "",
-        num: 0,
-      });
+      mutation.mutate()
     }
   };
 
@@ -138,23 +164,32 @@ const App = () => {
                 btn === "C"
                   ? resetClickHandler
                   : btn === "+-"
-                  ? invertClickHandler
-                  : btn === "%"
-                  ? percentClickHandler
-                  : btn === "="
-                  ? equalsClickHandler
-                  : btn === "/" || btn === "X" || btn === "-" || btn === "+"
-                  ? signClickHandler
-                  : btn === "."
-                  ? commaClickHandler
-                  : numClickHandler
+                    ? invertClickHandler
+                    : btn === "%"
+                      ? percentClickHandler
+                      : btn === "="
+                        ? equalsClickHandler
+                        : btn === "/" || btn === "X" || btn === "-" || btn === "+"
+                          ? signClickHandler
+                          : btn === "."
+                            ? commaClickHandler
+                            : numClickHandler
               }
             />
           );
         })}
       </ButtonBox>
+      <History />
     </Wrapper>
   );
-};
+}
 
-export default App;
+function Root() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
+  );
+}
+
+export default Root;
