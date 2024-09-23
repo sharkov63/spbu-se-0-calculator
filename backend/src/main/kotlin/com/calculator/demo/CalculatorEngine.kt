@@ -2,8 +2,9 @@ package com.calculator.demo
 
 import kotlin.math.pow
 
-class CalculatorEngine(private val input: String) {
-
+class CalculatorEngine(
+    private val input: String,
+) {
     private var pos = 0
 
     private fun consumeWhitespace() {
