@@ -7,28 +7,25 @@ class CalculatorService(
     val repository: CalculationResultRepository,
 ) {
     fun calculate(request: CalculationRequest): String {
-        val num1 = request.num1
-        val operator = request.operator
-        val num2 = request.num2
+        val expression = request.expression
+        var status: String = "success"
+        var result: Double = 0.0
 
-        val result =
-            when (operator) {
-                '+' -> num1 + num2
-                '-' -> num1 - num2
-                '*' -> num1 * num2
-                '/' -> if (num2 != 0.0) num1 / num2 else throw IllegalArgumentException("Деление на ноль")
-                else -> throw IllegalArgumentException("Некорректный оператор. Поддерживаемые операторы: +, -, *, /")
-            }
+        try {
+            result = CalculatorEngine(request.expression).evaluate()
+        } catch (e: Exception) {
+            status = "failed. " + e.message
+        }
 
         val calculationResult =
             CalculationResult(
-                num1 = num1,
-                operator = operator,
-                num2 = num2,
+                expression = expression,
+                status = status,
                 result = result,
             )
         repository.save(calculationResult)
 
+        result = CalculatorEngine(request.expression).evaluate()
         return result.toString()
     }
 

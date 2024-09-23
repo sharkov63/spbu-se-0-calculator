@@ -52,11 +52,11 @@ const App = () => {
   });
 
   function makeCalcRequest() {
+    const lhs = Number(removeSpaces(calc.res))
     const operator = calc.sign == 'X' ? '*' : calc.sign
+    const rhs = Number(removeSpaces(calc.num))
     return {
-      num1: Number(removeSpaces(calc.res)),
-      operator: operator,
-      num2: Number(removeSpaces(calc.num)),
+      expression: `${lhs}${operator}${rhs}`
     }
   }
 
