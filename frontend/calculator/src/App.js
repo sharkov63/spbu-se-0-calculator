@@ -2,10 +2,14 @@ import React, { useState } from "react";
 import { QueryClient, QueryClientProvider, useMutation, useQuery } from "@tanstack/react-query";
 
 import Wrapper from "./components/Wrapper";
-import Screen from "./components/Screen";
-import ButtonBox from "./components/ButtonBox";
-import Button from "./components/Button";
-import History from "./components/History";
+import Screen from "./components/calculator_components/Screen";
+import ButtonBox from "./components/calculator_components/ButtonBox";
+import Button from "./components/calculator_components/Button";
+import History from "./components/history_components/History";
+import CalcWrapper from "./components/calculator_components/CalcWrapper";
+import HistWrapper from "./components/history_components/HistWrapper";
+import HistorySign from "./components/history_components/HistorySign";
+import HistEquation from "./components/history_components/HistEquation";
 
 const queryClient = new QueryClient();
 
@@ -152,34 +156,39 @@ const App = () => {
 
   return (
     <Wrapper>
-      <Screen value={calc.num ? calc.num : calc.res} />
-      <ButtonBox>
-        {btnValues.flat().map((btn, i) => {
-          return (
-            <Button
-              key={i}
-              className={btn === "=" ? "equals" : ""}
-              value={btn}
-              onClick={
-                btn === "C"
-                  ? resetClickHandler
-                  : btn === "+-"
-                    ? invertClickHandler
-                    : btn === "%"
-                      ? percentClickHandler
-                      : btn === "="
-                        ? equalsClickHandler
-                        : btn === "/" || btn === "X" || btn === "-" || btn === "+"
-                          ? signClickHandler
-                          : btn === "."
-                            ? commaClickHandler
-                            : numClickHandler
-              }
-            />
-          );
-        })}
-      </ButtonBox>
-      <History />
+      <HistWrapper>
+        <HistorySign/>
+        <History />
+      </HistWrapper>
+      <CalcWrapper>
+        <Screen value={calc.num ? calc.num : calc.res} />
+        <ButtonBox>
+          {btnValues.flat().map((btn, i) => {
+            return (
+              <Button
+                key={i}
+                className={btn === "=" ? "equals" : ""}
+                value={btn}
+                onClick={
+                  btn === "C"
+                    ? resetClickHandler
+                    : btn === "+-"
+                      ? invertClickHandler
+                      : btn === "%"
+                        ? percentClickHandler
+                        : btn === "="
+                          ? equalsClickHandler
+                          : btn === "/" || btn === "X" || btn === "-" || btn === "+"
+                            ? signClickHandler
+                            : btn === "."
+                              ? commaClickHandler
+                              : numClickHandler
+                }
+              />
+            );
+          })}
+        </ButtonBox>
+      </CalcWrapper>
     </Wrapper>
   );
 }
