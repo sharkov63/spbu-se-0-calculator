@@ -14,6 +14,10 @@ async function fetchHistory() {
   return response.json()
 }
 
+function isSuccessHistoryRecord(record) {
+  return record.status === "success"
+}
+
 function History() {
   const { isPending, isError, error, data } = useQuery({
     queryKey: ["historyList"],
@@ -25,11 +29,12 @@ function History() {
       return "Fetching..."
     if (isError)
       return "Error: " + error.message
+    const recordList = [...data].reverse().filter(isSuccessHistoryRecord);
     return (
       <ul>
-        {[...data].reverse().map((record) => (
+        {recordList.map((record) => (
           <HistEquation
-            value={`${record.num1} ${record.operator} ${record.num2} = ${record.result}`}
+            value={`${record.expression} = ${record.result}`}
           />
         ))}
       </ul>
