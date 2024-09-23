@@ -1,6 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 
 import "./History.css";
+import HistorySign from "./HistorySign";
+import HistEquation from "./HistEquation";
+import setCalc from "../../App"
 
 async function fetchHistory() {
   const response = await fetch(
@@ -24,10 +27,10 @@ function History() {
       return "Error: " + error.message
     return (
       <ul>
-        {data.map((record) => (
-          <li key={record.id}>
-            ID{record.id}: {record.num1} {record.operator} {record.num2} = {record.result}
-          </li>
+        {[...data].reverse().map((record) => (
+          <HistEquation
+            value={`${record.num1} ${record.operator} ${record.num2} = ${record.result}`}
+          />
         ))}
       </ul>
     )
@@ -35,7 +38,6 @@ function History() {
 
   return (
     <div className="history">
-      <h1>The history:</h1>
       {historyBody()}
     </div>
   )

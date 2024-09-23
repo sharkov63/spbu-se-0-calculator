@@ -1,0 +1,8 @@
+.history {
+    width: 100%;
+    height: calc(100% - 110px);
+    margin-left: 0%;
+    display: flex;
+    flex-direction: column;
+    overflow: scroll;
+  }
