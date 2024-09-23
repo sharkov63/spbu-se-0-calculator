@@ -1,17 +1,12 @@
 .history-sign {
     height: 100px;
     width: 97%;
-    margin-left: 0%;
     margin-bottom: 10px;
-    padding: 0 10px;
-    background-color: #4357692d;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content:flex-start;
-    color: white;
+    color: #1B1B1B;
     font-weight: bold;
-    font-size: 20pt;
+    font-size: 10pt;
     box-sizing: border-box;
+    text-align: center;
+    line-height: 100px;
   }
   

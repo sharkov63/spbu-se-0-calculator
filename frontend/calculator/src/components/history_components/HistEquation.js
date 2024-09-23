@@ -1,9 +1,10 @@
 import "./HistEquation.css";
 
-const HistEquation = ({ value, onClick }) => {
+const HistEquation = ({ expression, result, onClick }) => {
     return (
       <div className="hist-equation" onClick={onClick}>
-        {value}
+          <div className="expression">{expression} = </div>
+          <div className="result">{result}</div>
       </div>
     );
 }

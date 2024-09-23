@@ -1,16 +1,23 @@
 .hist-equation {
     height: 100px;
     width: 97%;
-    margin-left: 0%;
     margin-bottom: 10px;
     padding: 0 10px;
-    background-color: #4357692d;
     border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
     color: white;
     font-weight: bold;
     box-sizing: border-box;
-  }
+}
+
+.hist-equation .expression {
+    font-weight: lighter;
+    font-size: 16px;
+    color: #5E5E5E;
+    margin-bottom: 5px;
+}
+
+.hist-equation .result {
+    font-size: 18px;
+    color: #000000;
+}
   
