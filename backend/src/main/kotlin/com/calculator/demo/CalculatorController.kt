@@ -18,7 +18,7 @@ class CalculatorController(
             val result = calculatorService.calculate(request)
             ResponseEntity.ok(result)
         } catch (e: Exception) {
-            ResponseEntity.badRequest().body("Ошибка: ${e.message}")
+            ResponseEntity.badRequest().body("failed. " + e.message)
         }
 
     @GetMapping("/history")

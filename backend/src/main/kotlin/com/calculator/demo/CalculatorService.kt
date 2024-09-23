@@ -25,7 +25,7 @@ class CalculatorService(
             )
         repository.save(calculationResult)
 
-        if (status != "success") return status
+        result = CalculatorEngine(request.expression).evaluate()
         return result.toString()
     }
 
@@ -34,7 +34,7 @@ class CalculatorService(
             IllegalArgumentException("Результат не найден")
         }
 
-    public fun getHistory(): List<CalculationResult> = repository.findAll()
+    fun getHistory(): List<CalculationResult> = repository.findAll()
 
     fun deleteHistory() {
         repository.deleteAll()
