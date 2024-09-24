@@ -18,5 +18,5 @@ data class CalculationResult(
     val id: Long? = null,
     val expression: String = "",
     val status: String = "",
-    val result: Double? = null,
+    val result: String? = null,
 )
