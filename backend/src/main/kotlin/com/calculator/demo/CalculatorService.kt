@@ -2,6 +2,7 @@ package com.calculator.demo
 
 import org.springframework.stereotype.Service
 import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 
 @Service
 class CalculatorService(
@@ -10,7 +11,9 @@ class CalculatorService(
     fun calculate(request: CalculationRequest): String {
         try {
             val result = CalculatorEngine(request.expression).evaluate()
-            val roundedResult = DecimalFormat("#.#########").format(result)
+            val formatSymbols = DecimalFormatSymbols()
+            formatSymbols.setInfinity("Infinity")
+            val roundedResult = DecimalFormat("#.#########", formatSymbols).format(result)
             val status = "success"
             val calculationResult =
                 CalculationResult(
