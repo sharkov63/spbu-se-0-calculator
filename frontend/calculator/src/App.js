@@ -110,16 +110,20 @@ const App = () => {
     },
   })
 
+  const canAppend = (symbol) => {
+    const len = calc.expression.length
+    const key = len > 0 ? calc.expression[len - 1] : "empty"
+    if (!(key in calcRules))
+      return
+    return calcRules[key].includes(symbol)
+  }
+
   const numClickHandler = (e) => {
     e.preventDefault();
     const value = e.target.innerHTML;
+    if (!canAppend(value))
+      return
 
-    if (calc.expression.length > 0 && !calcRules[calc.expression[calc.expression.length - 1]].includes(value)) {
-      return
-    }
-    if (calc.expression.length === 0 && !calcRules["empty"].includes(value)){
-      return
-    }
     if (removeSpaces(calc.num).length < 16) {
       const len = calc.expression.length
       if (len >= 1 && calc.expression[len - 1] == "0" 
@@ -158,12 +162,8 @@ const App = () => {
     e.preventDefault();
     const value = e.target.innerHTML;
 
-    if (calc.expression.length > 0 && !calcRules[calc.expression[calc.expression.length - 1]].includes(value)) {
+    if (!canAppend(value))
       return
-    }
-    if (calc.expression.length === 0 && !calcRules["empty"].includes(value)){
-      return
-    }
 
     setCalc({
       ...calc,
@@ -176,12 +176,8 @@ const App = () => {
     e.preventDefault();
     const value = e.target.innerHTML;
 
-    if (calc.expression.length > 0 && !calcRules[calc.expression[calc.expression.length - 1]].includes(value)) {
+    if (!canAppend(value))
       return
-    }
-    if (calc.expression.length === 0 && !calcRules["empty"].includes(value)){
-      return
-    }
 
     setCalc({
       ...calc,
@@ -191,23 +187,15 @@ const App = () => {
   };
 
   const equalsClickHandler = () => {
-    if (calc.expression.length > 0 && !calcRules[calc.expression[calc.expression.length - 1]].includes("=")) {
+    if (!canAppend("="))
       return
-    }
-    if (calc.expression.length === 0 && !calcRules["empty"].includes("=")){
-      return
-    }
 
     mutation.mutate()
   };
 
   const invertClickHandler = () => {
-    if (calc.expression.length > 0 && !calcRules[calc.expression[calc.expression.length - 1]].includes("+-")) {
+    if (!canAppend("+-"))
       return
-    }
-    if (calc.expression.length === 0 && !calcRules["empty"].includes("+-")){
-      return
-    }
 
     const matches = calc.expression.match(/[^0-9.]/g);
     const lastNonDigitOrDotIndex = matches ? calc.expression.lastIndexOf(matches[matches.length - 1]) : -1;
@@ -220,12 +208,8 @@ const App = () => {
   };
 
   const percentClickHandler = () => {
-    if (calc.expression.length > 0 && !calcRules[calc.expression[calc.expression.length - 1]].includes("%")) {
+    if (!canAppend("%"))
       return
-    }
-    if (calc.expression.length === 0 && !calcRules["empty"].includes("%")){
-      return
-    }
 
     const matches = calc.expression.match(/[^0-9.]/g);
     const lastNonDigitOrDotIndex = matches ? calc.expression.lastIndexOf(matches[matches.length - 1]) : -1;
@@ -249,12 +233,8 @@ const App = () => {
   };
 
   const bracketClickHandler = () => {
-    if (calc.expression.length > 0 && !calcRules[calc.expression[calc.expression.length - 1]].includes("(")) {
+    if (!canAppend("("))
       return
-    }
-    if (calc.expression.length === 0 && !calcRules["empty"].includes("(")){
-      return
-    }
 
     setCalc({
       ...calc,
@@ -265,12 +245,7 @@ const App = () => {
   }
 
   const backBracketClickHandler = () => {
-    if (calc.expression.length > 0 && !calcRules[calc.expression[calc.expression.length - 1]].includes(")")) {
-      return
-    }
-    if (calc.expression.length === 0 && !calcRules["empty"].includes(")")){
-      return
-    }
+    if (!canAppend(")"))
 
     if (calc.braceBalance === 0) {
       return
