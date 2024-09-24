@@ -4,4 +4,5 @@
     width: 60%;
     height: 100%;
     margin-left: auto;
-  }
+    min-width: 350px;
+}

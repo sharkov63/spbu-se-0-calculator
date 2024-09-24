@@ -14,5 +14,6 @@
     font-weight: bold;
     box-sizing: border-box;
     font-size: 30pt;
+    min-width: 700px;
   }
   
