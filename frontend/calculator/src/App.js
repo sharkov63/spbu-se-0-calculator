@@ -260,9 +260,22 @@ const App = () => {
   }
 
   const deleteClickHandler = () => {
+    let numb = "";
+    for (let i = calc.expression.length - 2; i >= 0; i--) {
+      const char = calc.expression[i];
+      if (/[\d.]/.test(char)) {
+        numb += char;
+      }
+      else {
+        break;
+      }
+    }
+    numb = numb.split('').reverse().join('')
+
     setCalc({
       ...calc,
       expression: calc.expression.length > 0 ? calc.expression.slice(0, calc.expression.length - 1) : "",
+      num: numb,
     });
   }
 
