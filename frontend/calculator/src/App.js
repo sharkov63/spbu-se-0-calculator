@@ -51,6 +51,15 @@ const App = () => {
     res: 0,
   });
 
+  function setCalcToValue(value) {
+    setCalc({
+      ...calc,
+      res: value,
+      sign: "",
+      num: 0,
+    })
+  }
+
   function makeCalcRequest() {
     const lhs = Number(removeSpaces(calc.res))
     const operator = calc.sign == 'X' ? '*' : calc.sign
@@ -65,13 +74,8 @@ const App = () => {
       return postCalculate(makeCalcRequest())
     },
     onSuccess: (data) => {
+      setCalcToValue(data)
       queryClient.invalidateQueries()
-      setCalc({
-        ...calc,
-        res: data,
-        sign: "",
-        num: 0,
-      });
     },
     onError: (error) => {
       alert(error.message)
@@ -146,12 +150,7 @@ const App = () => {
   };
 
   const resetClickHandler = () => {
-    setCalc({
-      ...calc,
-      sign: "",
-      num: 0,
-      res: 0,
-    });
+    setCalcToValue(0)
   };
 
   return (
@@ -187,7 +186,7 @@ const App = () => {
       </CalcWrapper>
       <HistWrapper>
         <HistorySign/>
-        <History />
+        <History setCalcToValue={setCalcToValue}/>
       </HistWrapper>
     </Wrapper>
   );
