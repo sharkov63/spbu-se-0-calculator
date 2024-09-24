@@ -38,8 +38,8 @@ const calcRules = {
   "-": ["0", "1", "2", "3", "4", "5", "6", "7", "8", ".", "9", "("],
   "X": ["0", "1", "2", "3", "4", "5", "6", "7", "8", ".", "9", "("],
   "/": ["0", "1", "2", "3", "4", "5", "6", "7", "8", ".", "9", "("],
-  "(": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "+", "-", "X", "/", "=", "("],
-  ")": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "+", "-", "^", "X", "/", "=", "(", ")"],
+  "(": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "-", "=", "("],
+  ")": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "-", "^", "X", "/", "=", "(", ")"],
   "^": ["0", "1", "2", "3", "4", "5", "6", "7", "8", ".", "9", "(", ")"],
   "empty": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "-", "(", ")"]
 };
@@ -72,17 +72,19 @@ const App = () => {
   const [calc, setCalc] = useState({
     expression: "",
     num: 0,
+    braceBalance: 0,
   });
 
   function setCalcToValue(value) {
     setCalc({
       expression: value,
-      num: Math.abs(value)
+      num: Math.abs(value),
+      braceBalance: 0,
     })
   }
 
   function makeCalcRequest() {
-    const exp = calc.expression.replace(/X/g, `*`)
+    const exp = calc.expression.replace(/X/g, `*`) + ')'.repeat(calc.braceBalance);
     return {
       expression: exp
     }
@@ -99,6 +101,7 @@ const App = () => {
         ...calc,
         expression: (data - parseInt(data, 10) !== 0) ? data.toString() : parseInt(data, 10).toString(),
         num: Math.abs(data),
+        braceBalance: 0,
       });
     },
     onError: (error) => {
@@ -226,6 +229,7 @@ const App = () => {
       ...calc,
       expression: "",
       num: 0,
+      braceBalance: 0,
     });
   };
 
@@ -241,6 +245,7 @@ const App = () => {
       ...calc,
       expression: calc.expression + "(",
       num: 0,
+      braceBalance: calc.braceBalance + 1,
     });
   }
 
@@ -252,10 +257,15 @@ const App = () => {
       return
     }
 
+    if (calc.braceBalance === 0) {
+      return
+    }
+
     setCalc({
       ...calc,
       expression: calc.expression + ")",
       num: 0,
+      braceBalance: calc.braceBalance - 1,
     });
   }
 
@@ -271,11 +281,13 @@ const App = () => {
       }
     }
     numb = numb.split('').reverse().join('')
+    const isBrace = calc.expression[calc.expression.length - 1] == "(" ? -1 : (calc.expression[calc.expression.length - 1] == ")" ? 1 : 0)
 
     setCalc({
       ...calc,
       expression: calc.expression.length > 0 ? calc.expression.slice(0, calc.expression.length - 1) : "",
       num: numb,
+      braceBalance: calc.braceBalance + isBrace,
     });
   }
 
