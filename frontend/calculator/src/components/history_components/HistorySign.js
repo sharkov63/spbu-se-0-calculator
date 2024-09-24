@@ -4,7 +4,7 @@ import "./HistorySign.css";
 const HistorySign = () => {
   return (
     <div className="history-sign">
-      <h2 className="history-label">History:</h2>
+      <h2 className="history-label">History</h2>
     </div>
   );
 };
