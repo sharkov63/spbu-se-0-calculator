@@ -155,10 +155,6 @@ const App = () => {
 
   return (
     <Wrapper>
-      <HistWrapper>
-        <HistorySign />
-        <History setCalcToValue={setCalcToValue}/>
-      </HistWrapper>
       <CalcWrapper>
         <Screen value={calc.num ? calc.num : calc.res} />
         <ButtonBox>
@@ -188,6 +184,10 @@ const App = () => {
           })}
         </ButtonBox>
       </CalcWrapper>
+      <HistWrapper>
+        <HistorySign/>
+        <History setCalcToValue={setCalcToValue}/>
+      </HistWrapper>
     </Wrapper>
   );
 }

@@ -32,7 +32,9 @@ function History({ setCalcToValue }) {
       <ul>
         {recordList.map((record) => (
           <HistEquation
-            value={`${record.expression} = ${record.result}`}
+            key={record.id}
+            expression={record.expression}
+            result={record.result}
             onClick={() => { setCalcToValue(record.result) }}
           />
         ))}

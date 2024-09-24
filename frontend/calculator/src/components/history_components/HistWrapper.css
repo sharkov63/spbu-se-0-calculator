@@ -1,7 +1,8 @@
 .hist-wrapper {
     display: flex;
     flex-direction: column; 
-    width: 100%; 
+    width: 60%;
     height: 100%;
     margin-left: auto;
-  }
+    min-width: 350px;
+}
