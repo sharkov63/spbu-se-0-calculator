@@ -1,32 +1,28 @@
 package com.calculator.demo
 
 import org.springframework.stereotype.Service
+import java.text.DecimalFormat
 
 @Service
 class CalculatorService(
     val repository: CalculationResultRepository,
 ) {
     fun calculate(request: CalculationRequest): String {
-        val expression = request.expression
-        var status: String = "success"
-        var result: Double = 0.0
-
         try {
-            result = CalculatorEngine(request.expression).evaluate()
+            val result = CalculatorEngine(request.expression).evaluate()
+            val roundedResult = DecimalFormat("#.######").format(result)
+            val status = "success"
+            val calculationResult =
+                CalculationResult(
+                    expression = request.expression,
+                    status = status,
+                    result = roundedResult,
+                )
+            repository.save(calculationResult)
+            return roundedResult
         } catch (e: Exception) {
-            status = "failed. " + e.message
+            throw e
         }
-
-        val calculationResult =
-            CalculationResult(
-                expression = expression,
-                status = status,
-                result = result,
-            )
-        repository.save(calculationResult)
-
-        result = CalculatorEngine(request.expression).evaluate()
-        return result.toString()
     }
 
     fun getCalculationById(id: Long): CalculationResult =
