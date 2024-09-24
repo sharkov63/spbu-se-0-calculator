@@ -1,6 +1,7 @@
 .hist-equation {
-    height: 60px;
-    width: 97%;
+    min-height: 60px;
+    height: fit-content;
+    width: 350px;
     margin-bottom: 20px;
     padding: 0 10px;
     color: white;
@@ -36,6 +37,7 @@
     font-size: 16px;
     color: #5E5E5E;
     margin-bottom: 5px;
+    width: 350px;
 }
 
 .hist-equation .result {

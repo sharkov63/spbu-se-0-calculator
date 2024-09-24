@@ -1,19 +1,25 @@
 .screen {
     box-shadow: inset 0 0 5px #CCCCCC;
     height: 100px;
-    width: 100%;
     margin-left: auto;
     margin-bottom: 10px;
     padding: 0 10px;
     background-color: #EEEDE3;
     border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
+
     color: #1B1B1B;
     font-weight: bold;
     box-sizing: border-box;
     font-size: 30pt;
-    min-width: 700px;
+    width: 700px;
+    overflow-x: scroll;
+    white-space: nowrap;
+    overflow-y: hidden;
+
+    scrollbar-width: thin;
+    scrollbar-color: #888 transparent;
+
+    text-align: right;
+    line-height: 100px;
   }
   
