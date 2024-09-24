@@ -44,6 +44,8 @@ const calcRules = {
   "empty": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "-", "(", ")"]
 };
 
+const leadingZeroesRule = ["+", "-", "(", ")", "^", "X", "/", "%", "+-", "="];
+
 
 const toLocaleString = (num) =>
   String(num).replace(/(?<!\..*)(\d)(?=(?:\d{3})+(?:\.|$))/g, "$1 ");
@@ -114,6 +116,11 @@ const App = () => {
       return
     }
     if (calc.expression.length === 0 && !calcRules["empty"].includes(value)){
+      return
+    }
+    const len = calc.expression.length
+    if (value == "0" && len >= 1 && calc.expression[len - 1] == "0" 
+      && (len == 1 || leadingZeroesRule.includes(calc.expression[len - 2]))) {
       return
     }
   
