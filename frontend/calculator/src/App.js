@@ -14,12 +14,36 @@ import HistEquation from "./components/history_components/HistEquation";
 const queryClient = new QueryClient();
 
 const btnValues = [
+  ["(", ")", "^", "Del"],
   ["C", "+-", "%", "/"],
   [7, 8, 9, "X"],
   [4, 5, 6, "-"],
   [1, 2, 3, "+"],
   [0, ".", "="],
 ];
+
+const calcRules = {
+  "0": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "+", "-", "^", "X", "/", "%", "+-", "=", ")"],
+  "1": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "+", "-", "^", "X", "/", "%", "+-", "=", ")"],
+  "2": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "+", "-", "^", "X", "/", "%", "+-", "=", ")"],
+  "3": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "+", "-", "^", "X", "/", "%", "+-", "=", ")"],
+  "4": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "+", "-", "^", "X", "/", "%", "+-", "=", ")"],
+  "5": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "+", "-", "^", "X", "/", "%", "+-", "=", ")"],
+  "6": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "+", "-", "^", "X", "/", "%", "+-", "=", ")"],
+  "7": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "+", "-", "^", "X", "/", "%", "+-", "=", ")"],
+  "8": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "+", "-", "^", "X", "/", "%", "+-", "=", ")"],
+  "9": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "+", "-", "^", "X", "/", "%", "+-", "=", ")"],
+  ".": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "-", "X", "^", "/", "%", "+-", "=", ")"], 
+  "+": ["0", "1", "2", "3", "4", "5", "6", "7", "8", ".", "9", "("], 
+  "-": ["0", "1", "2", "3", "4", "5", "6", "7", "8", ".", "9", "("],
+  "X": ["0", "1", "2", "3", "4", "5", "6", "7", "8", ".", "9", "("],
+  "/": ["0", "1", "2", "3", "4", "5", "6", "7", "8", ".", "9", "("],
+  "(": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "+", "-", "X", "/", "=", "("],
+  ")": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "+", "-", "^", "X", "/", "=", "(", ")"],
+  "^": ["0", "1", "2", "3", "4", "5", "6", "7", "8", ".", "9", "(", ")"],
+  "empty": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "-", "(", ")"]
+};
+
 
 const toLocaleString = (num) =>
   String(num).replace(/(?<!\..*)(\d)(?=(?:\d{3})+(?:\.|$))/g, "$1 ");
@@ -46,26 +70,21 @@ async function postCalculate(calcRequest) {
 
 const App = () => {
   const [calc, setCalc] = useState({
-    sign: "",
+    expression: "",
     num: 0,
-    res: 0,
   });
 
   function setCalcToValue(value) {
     setCalc({
-      ...calc,
-      res: value,
-      sign: "",
-      num: 0,
+      expression: value,
+      num: Math.abs(value)
     })
   }
 
   function makeCalcRequest() {
-    const lhs = Number(removeSpaces(calc.res))
-    const operator = calc.sign == 'X' ? '*' : calc.sign
-    const rhs = Number(removeSpaces(calc.num))
+    const exp = calc.expression.replace(/X/g, `*`)
     return {
-      expression: `${lhs}${operator}${rhs}`
+      expression: exp
     }
   }
 
@@ -76,6 +95,11 @@ const App = () => {
     onSuccess: (data) => {
       setCalcToValue(data)
       queryClient.invalidateQueries()
+      setCalc({
+        ...calc,
+        expression: (data - parseInt(data, 10) !== 0) ? data.toString() : parseInt(data, 10).toString(),
+        num: Math.abs(data),
+      });
     },
     onError: (error) => {
       alert(error.message)
@@ -86,16 +110,28 @@ const App = () => {
     e.preventDefault();
     const value = e.target.innerHTML;
 
+    if (calc.expression.length > 0 && !calcRules[calc.expression[calc.expression.length - 1]].includes(value)) {
+      return
+    }
+    if (calc.expression.length === 0 && !calcRules["empty"].includes(value)){
+      return
+    }
+  
     if (removeSpaces(calc.num).length < 16) {
       setCalc({
         ...calc,
+        expression:
+          calc.num === 0 && value === "0"
+            ? calc.expression + "0"
+            : removeSpaces(calc.num) % 1 === 0
+              ? calc.expression + toLocaleString(Number(removeSpaces(value)))
+              : calc.expression + toLocaleString(value),
         num:
           calc.num === 0 && value === "0"
             ? "0"
             : removeSpaces(calc.num) % 1 === 0
               ? toLocaleString(Number(removeSpaces(calc.num + value)))
               : toLocaleString(calc.num + value),
-        res: !calc.sign ? 0 : calc.res,
       });
     }
   };
@@ -104,8 +140,16 @@ const App = () => {
     e.preventDefault();
     const value = e.target.innerHTML;
 
+    if (calc.expression.length > 0 && !calcRules[calc.expression[calc.expression.length - 1]].includes(value)) {
+      return
+    }
+    if (calc.expression.length === 0 && !calcRules["empty"].includes(value)){
+      return
+    }
+
     setCalc({
       ...calc,
+      expression: !calc.num.toString().includes(".") ? calc.expression + value : calc.expression,
       num: !calc.num.toString().includes(".") ? calc.num + value : calc.num,
     });
   };
@@ -114,49 +158,118 @@ const App = () => {
     e.preventDefault();
     const value = e.target.innerHTML;
 
+    if (calc.expression.length > 0 && !calcRules[calc.expression[calc.expression.length - 1]].includes(value)) {
+      return
+    }
+    if (calc.expression.length === 0 && !calcRules["empty"].includes(value)){
+      return
+    }
+
     setCalc({
       ...calc,
-      sign: value,
-      res: !calc.res && calc.num ? calc.num : calc.res,
+      expression: calc.expression + value,
       num: 0,
     });
   };
 
   const equalsClickHandler = () => {
-    if (calc.sign && calc.num) {
-      mutation.mutate()
+    if (calc.expression.length > 0 && !calcRules[calc.expression[calc.expression.length - 1]].includes("=")) {
+      return
     }
+    if (calc.expression.length === 0 && !calcRules["empty"].includes("=")){
+      return
+    }
+
+    mutation.mutate()
   };
 
   const invertClickHandler = () => {
+    if (calc.expression.length > 0 && !calcRules[calc.expression[calc.expression.length - 1]].includes("+-")) {
+      return
+    }
+    if (calc.expression.length === 0 && !calcRules["empty"].includes("+-")){
+      return
+    }
+
+    const matches = calc.expression.match(/[^0-9.]/g);
+    const lastNonDigitOrDotIndex = matches ? calc.expression.lastIndexOf(matches[matches.length - 1]) : -1;
+    
     setCalc({
       ...calc,
+      expression: (lastNonDigitOrDotIndex !== -1 ? calc.expression.slice(0, lastNonDigitOrDotIndex + 1) : "") + (calc.num ? "(" + toLocaleString(removeSpaces(calc.num) * -1) + ")" : "0"),
       num: calc.num ? toLocaleString(removeSpaces(calc.num) * -1) : 0,
-      res: calc.res ? toLocaleString(removeSpaces(calc.res) * -1) : 0,
-      sign: "",
     });
   };
 
   const percentClickHandler = () => {
+    if (calc.expression.length > 0 && !calcRules[calc.expression[calc.expression.length - 1]].includes("%")) {
+      return
+    }
+    if (calc.expression.length === 0 && !calcRules["empty"].includes("%")){
+      return
+    }
+
+    const matches = calc.expression.match(/[^0-9.]/g);
+    const lastNonDigitOrDotIndex = matches ? calc.expression.lastIndexOf(matches[matches.length - 1]) : -1;
+
     let num = calc.num ? parseFloat(removeSpaces(calc.num)) : 0;
-    let res = calc.res ? parseFloat(removeSpaces(calc.res)) : 0;
 
     setCalc({
       ...calc,
+      expression: (lastNonDigitOrDotIndex !== -1 ? calc.expression.slice(0, lastNonDigitOrDotIndex + 1) : "") + (num /= Math.pow(100, 1)).toString(),
       num: (num /= Math.pow(100, 1)),
-      res: (res /= Math.pow(100, 1)),
-      sign: "",
     });
   };
 
   const resetClickHandler = () => {
-    setCalcToValue(0)
+    setCalc({
+      ...calc,
+      expression: "",
+      num: 0,
+    });
   };
+
+  const bracketClickHandler = () => {
+    if (calc.expression.length > 0 && !calcRules[calc.expression[calc.expression.length - 1]].includes("(")) {
+      return
+    }
+    if (calc.expression.length === 0 && !calcRules["empty"].includes("(")){
+      return
+    }
+
+    setCalc({
+      ...calc,
+      expression: calc.expression + "(",
+      num: 0,
+    });
+  }
+
+  const backBracketClickHandler = () => {
+    if (calc.expression.length > 0 && !calcRules[calc.expression[calc.expression.length - 1]].includes(")")) {
+      return
+    }
+    if (calc.expression.length === 0 && !calcRules["empty"].includes(")")){
+      return
+    }
+
+    setCalc({
+      ...calc,
+      expression: calc.expression + ")",
+      num: 0,
+    });
+  }
+
+  const deleteClickHandler = () => {
+    setCalc({
+      ...calc,
+      expression: calc.expression.length > 0 ? calc.expression.slice(0, calc.expression.length - 1) : "",
+    });
+  }
 
   return (
     <Wrapper>
       <CalcWrapper>
-        <Screen value={calc.num ? calc.num : calc.res} />
+        <Screen value={calc.expression} />
         <ButtonBox>
           {btnValues.flat().map((btn, i) => {
             return (
@@ -173,11 +286,17 @@ const App = () => {
                         ? percentClickHandler
                         : btn === "="
                           ? equalsClickHandler
-                          : btn === "/" || btn === "X" || btn === "-" || btn === "+"
+                          : btn === "/" || btn === "X" || btn === "-" || btn === "+" || btn === "^"
                             ? signClickHandler
                             : btn === "."
                               ? commaClickHandler
-                              : numClickHandler
+                              : btn == "(" 
+                                ? bracketClickHandler 
+                                : btn == ")" 
+                                  ? backBracketClickHandler 
+                                  : btn == "Del" 
+                                    ? deleteClickHandler 
+                                    : numClickHandler
                 }
               />
             );
