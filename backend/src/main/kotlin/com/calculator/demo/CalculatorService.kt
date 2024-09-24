@@ -10,7 +10,7 @@ class CalculatorService(
     fun calculate(request: CalculationRequest): String {
         try {
             val result = CalculatorEngine(request.expression).evaluate()
-            val roundedResult = DecimalFormat("#.######").format(result)
+            val roundedResult = DecimalFormat("#.#########").format(result)
             val status = "success"
             val calculationResult =
                 CalculationResult(
