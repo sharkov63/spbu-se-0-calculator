@@ -1,9 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import "./History.css";
-import HistorySign from "./HistorySign";
 import HistEquation from "./HistEquation";
-import setCalc from "../../App"
 
 async function fetchHistory() {
   const response = await fetch(
@@ -18,7 +16,7 @@ function isSuccessHistoryRecord(record) {
   return record.status === "success"
 }
 
-function History() {
+function History({ setCalcToValue }) {
   const { isPending, isError, error, data } = useQuery({
     queryKey: ["historyList"],
     queryFn: fetchHistory
@@ -29,12 +27,13 @@ function History() {
       return "Fetching..."
     if (isError)
       return "Error: " + error.message
-    const recordList = [...data].reverse().filter(isSuccessHistoryRecord);
+    const recordList = data.toReversed().filter(isSuccessHistoryRecord);
     return (
       <ul>
         {recordList.map((record) => (
           <HistEquation
             value={`${record.expression} = ${record.result}`}
+            onClick={() => { setCalcToValue(record.result) }}
           />
         ))}
       </ul>
