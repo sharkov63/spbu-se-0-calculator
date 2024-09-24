@@ -9,6 +9,7 @@
     box-sizing: border-box;
     align-content: center;
     text-align: right;
+    overflow: hidden;
 }
 
 .hist-equation:hover{
@@ -37,7 +38,6 @@
     font-size: 16px;
     color: #5E5E5E;
     margin-bottom: 5px;
-    width: 350px;
 }
 
 .hist-equation .result {
