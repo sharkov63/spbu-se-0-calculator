@@ -246,6 +246,7 @@ const App = () => {
 
   const backBracketClickHandler = () => {
     if (!canAppend(")"))
+      return
 
     if (calc.braceBalance === 0) {
       return
