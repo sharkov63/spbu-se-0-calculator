@@ -1,6 +1,7 @@
 .hist-equation {
-    height: 60px;
-    width: 97%;
+    min-height: 60px;
+    height: fit-content;
+    width: 350px;
     margin-bottom: 20px;
     padding: 0 10px;
     color: white;
@@ -8,6 +9,11 @@
     box-sizing: border-box;
     align-content: center;
     text-align: right;
+    overflow: hidden;
+
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: break-word;
 }
 
 .hist-equation:hover{
